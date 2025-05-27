@@ -1,11 +1,13 @@
 import os
 import socket
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 
+load_dotenv()
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
