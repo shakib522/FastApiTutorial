@@ -1,13 +1,13 @@
-import os
-import socket
 
-from dotenv import load_dotenv
+import socket
+import subprocess
+
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 
-load_dotenv()
+
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
@@ -48,10 +48,20 @@ def get_item(item_id: int) -> Item:
 def list_items(limit: int = 10):
     return items[0:limit]
 
+
+def get_git_commit_hash() -> str:
+    try:
+        commit_hash = subprocess.check_output(
+            ['git', 'rev-parse', '--short','HEAD']
+        ).decode('utf-8').strip()
+        return commit_hash
+    except Exception as e:
+        return "unknown"
+
 @app.get("/get_hash",response_class=HTMLResponse)
 def read_root(request: Request):
     hostname = socket.gethostname()
-    commit_hash = os.getenv("COMMIT_HASH","unknown")
+    commit_hash = get_git_commit_hash()
     return templates.TemplateResponse(
         "index.html",{
             "request": request,
