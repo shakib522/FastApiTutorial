@@ -28,3 +28,14 @@ jobs:
           context: .
           push: true
           tags: shakib19/fastapi-deployment-info:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - name: Pull and Run Docker Container on VM
+        run: |
+          docker stop fastapi-app || true
+          docker rm fastapi-app || true
+          docker pull shakib19/fastapi-deployment-info:latest
+          docker run -d --name fastapi-app -p 8000:8000 shakib19/fastapi-deployment-info:latest
