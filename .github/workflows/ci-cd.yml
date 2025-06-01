@@ -29,11 +29,33 @@ jobs:
           push: true
           tags: shakib19/fastapi-deployment-info:latest
 
-  deploy:
+  deploy-vm1:
     needs: build-and-push
-    runs-on: self-hosted
+    runs-on: [self-hosted, vm-1]
     steps:
-      - name: Pull and Run Docker Container on VM
+      - name: Deploy on VM 1 using docker
+        run: |
+          docker stop fastapi-app || true
+          docker rm fastapi-app || true
+          docker pull shakib19/fastapi-deployment-info:latest
+          docker run -d --name fastapi-app -p 8000:8000 shakib19/fastapi-deployment-info:latest
+
+  deploy-vm2:
+    needs: build-and-push
+    runs-on: [self-hosted, vm-2]
+    steps:
+      - name: Deploy on VM 2 using docker
+        run: |
+          docker stop fastapi-app || true
+          docker rm fastapi-app || true
+          docker pull shakib19/fastapi-deployment-info:latest
+          docker run -d --name fastapi-app -p 8000:8000 shakib19/fastapi-deployment-info:latest
+
+  deploy-vm3:
+    needs: build-and-push
+    runs-on: [self-hosted, vm-3]
+    steps:
+      - name: Deploy on VM 3 using docker
         run: |
           docker stop fastapi-app || true
           docker rm fastapi-app || true
